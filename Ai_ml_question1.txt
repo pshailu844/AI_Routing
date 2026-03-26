@@ -1,0 +1,67 @@
+AI Powered Intelligent Ticket Routing & Resolution Agent
+Key Focus Areas
+Automated Ticket Classification
+
+RAG Resolution Insights
+
+Intelligent Routing Logic
+
+Agentic Escalation Systems
+
+Problem Statement
+IT services companies receive thousands of support tickets daily:
+● Misrouted tickets
+● Slow resolution
+● Poor categorization
+● Manual triaging
+
+Build:
+An AI system that:
+● Classifies incoming tickets
+● Routes to correct department
+● Suggests resolution
+● Escalates when uncertain
+● Tracks confidence
+
+Technical Requirements
+Classification Layer
+● Use embeddings or fine-tuned model
+● Categorize into:
+○ Infrastructure
+○ Application
+○ Security
+○ Database
+○ Network
+○ Access Management
+
+RAG Layer
+● Retrieve similar past tickets
+● Suggest resolution steps
+
+Agentic Layer (Bonus)
+● If confidence < threshold → escalate
+● If repeated issue → suggest automation
+
+Evaluation
+● Accuracy
+● F1 Score
+● Semantic similarity scoring
+● LLM-as-judge evaluation
+
+Data Sources (Free & Practical)
+Option A – Kaggle Datasets
+● IT Support Ticket Dataset
+● Helpdesk Ticket Classification Dataset
+● ServiceNow-like datasets
+Option B – StackOverflow Dataset
+● Filter by tags
+● Convert Q&A into ticket-resolution format
+Option C – Synthetic Enterprise Dataset (Recommended)
+● Provide:
+○ 1,000 synthetic tickets (CSV)
+○ title
+○ description
+○ category
+○ resolution
+○ priority
+Generate using LLM to simulate realistic enterprise patterns.
