@@ -192,7 +192,113 @@ def chat():
         if not message:
             return jsonify({'error': 'No message provided'}), 400
         
-        # Step 1: Classify the ticket/query
+        # Detect greetings and casual messages
+        message_lower = message.lower()
+        
+        # Phrases that indicate actual IT issues (not just greetings)
+        issue_indicators = [
+            'help me', 'help with', 'help to', 'how do i', 'how can i', 'how to',
+            'can you help', 'cannot', "can't", 'unable to', 'not working', 'error',
+            'issue with', 'problem with', 'trouble with', 'having issues',
+            'fix', 'solve', 'resolve', 'access', 'connect', 'login', 'reset',
+            'install', 'configure', 'setup', 'crashed', 'slow', 'timeout'
+        ]
+        
+        # Check if message contains IT issue indicators - if so, it's NOT a greeting
+        has_issue_content = any(indicator in message_lower for indicator in issue_indicators)
+        
+        # Pure greeting phrases (standalone only)
+        pure_greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 
+                         'good evening', 'greetings', 'howdy', 'sup', 'yo', 'hiya', 'hola']
+        
+        # Pure help requests (asking ABOUT the system, not asking for help WITH an issue)
+        system_help_phrases = ['what can you do', 'how to use this', 'what are your features', 
+                              'show me features', 'what is this', 'explain this system']
+        
+        # Greeting detection: SHORT message with ONLY greeting words, NO issue content
+        is_greeting = (len(message.split()) <= 4 and 
+                      any(phrase in message_lower for phrase in pure_greetings) and
+                      not has_issue_content)
+        
+        # Help request: Asking about the SYSTEM itself, not about fixing an issue
+        is_help_request = (any(phrase in message_lower for phrase in system_help_phrases) and 
+                          not has_issue_content)
+        
+        # Handle greetings without running full pipeline
+        if is_greeting:
+            logger.info(f"app | chat | Detected greeting: {message}")
+            greeting_response = """Hello! 👋 Welcome to AI Ticket Support!
+
+I'm here to help you with IT support issues. Here's how I can assist you:
+
+**What I Can Do:**
+• **Classify Issues** - Automatically categorize your IT problems
+• **Find Solutions** - Retrieve similar past tickets and resolutions
+• **Suggest Routing** - Recommend the right support team
+• **Provide Estimates** - Give resolution time predictions
+**How to Get Started:**
+1. **Describe Your Issue** 
+   Example: "My database connection keeps timing out"
+2. **Browse Tickets** 
+   Click the "Browse Tickets" button to explore 1000+ historical tickets
+3. **Review New Tickets**
+   Click "New Tickets" to see unresolved issues with AI analysis
+4. **Get Statistics**
+   Click "Database Stats" for insights and trends
+**Try asking me something like:**
+• "I can't access the VPN"
+• "Email server is down"
+• "Need password reset"
+• "Application error 500"
+What issue can I help you with today?"""
+            
+            return jsonify({
+                'response': greeting_response,
+                'is_greeting': True,
+                'metadata': {
+                    'message_type': 'greeting'
+                }
+            })
+        
+        # Handle help requests
+        if is_help_request:
+            logger.info(f"app | chat | Detected help request: {message}")
+            help_response = """**How to Use AI Ticket Support**
+
+**Quick Guide:**
+
+1. **For Specific Issues:**
+   - Type your IT problem in plain English
+   - Example: "Cannot connect to database"
+   - I'll classify it, find similar tickets, and suggest solutions
+
+2. **Browse Historical Data:**
+   - **Browse Tickets** - Explore 1000+ resolved tickets by category
+   - **New Tickets** - Review unprocessed tickets with AI analysis
+   - **Database Stats** - View system statistics and insights
+
+3. **Interactive Features:**
+   - Click on any ticket to discuss it
+   - Ask follow-up questions about solutions
+   - Get routing and escalation recommendations
+
+**Sample Questions:**
+• "My application keeps crashing"
+• "VPN connection failed"
+• "Database performance is slow"
+• "Need admin access to the system"
+
+**What would you like help with?**"""
+            
+            return jsonify({
+                'response': help_response,
+                'is_help': True,
+                'metadata': {
+                    'message_type': 'help'
+                }
+            })
+        
+        # Step 1: Classify the ticket/query (for actual issues)
         logger.info(f"app | chat | Classifying query: {message[:50]}...")
         classification = classifier.predict(
             title=message,

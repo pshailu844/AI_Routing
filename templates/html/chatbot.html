@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ticket Support Chatbot</title>
+    <link rel="stylesheet" href="/css/chatbot.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="bot-avatar">
+                    <img src="/static/icon/Computer-Robot Cyborg-256.png" alt="AI Bot" style="width: 50px; height: 50px; border-radius: 8px;">
+                </div>
+                <div class="header-info">
+                    <h1>AI Ticket Support Assistant</h1>
+                    <p class="status" id="status">Initializing...</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-stats" id="historyBtn">
+                    <img src="/static/icon/chat-bubble.png" alt="Chat History" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
+                    Chat History
+                </button>
+                <button class="btn-stats" id="newTicketBtn">New Tickets</button>
+                <button class="btn-stats" id="browseBtn">Browse Tickets</button>
+                <button class="btn-stats" id="statsBtn">Database Stats</button>
+                <button class="btn-clear" id="clearBtn">Clear Chat</button>
+            </div>
+        </div>
+
+        
+        <div class="main-content">
+          
+            <div class="chat-section">
+                <!-- Chat Panel Toggle Button (top right corner) -->
+                <button class="btn-chat-panel-toggle" id="chatPanelToggle" title="Toggle Info Panel">
+                    <img src="/static/icon/expand.png" alt="Toggle Panel" id="chatToggleIcon" style="width: 20px; height: 20px; transform: rotate(180deg);">
+                </button>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <div class="bot-avatar-large"></div>
+                        <h2>Welcome to AI Ticket Support!</h2>
+                        <p>I'm your intelligent IT support assistant.</p>
+                        <p>I can help you with ticket classification, resolution suggestions, and escalation management.</p>
+                        
+                        <div style="background: linear-gradient(135deg, #f3f4ff 0%, #faf5ff 100%); border-radius: 12px; padding: 20px; margin-top: 25px; border: 2px solid #e9d5ff;">
+                            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">
+                                Quick Start Guide
+                            </h3>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #667eea; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                        <strong style="color: #374151;">Type Your Issue</strong>
+                                    </div>
+                                    <div style="font-size: 13px; color: #6b7280;">
+                                        Describe your IT problem and get instant AI-powered solutions
+                                    </div>
+                                </div>
+                                
+                                <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f59e0b; cursor: pointer; transition: all 0.2s;" onclick="openNewTicketModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                        <strong style="color: #374151;">New Tickets</strong>
+                                        <span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">EXPLORE</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #6b7280;">
+                                        Review New Tickets with AI similarity analysis & routing
+                                    </div>
+                                </div>
+                                
+                                <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #10b981; cursor: pointer; transition: all 0.2s;" onclick="openBrowseModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                        <strong style="color: #374151;">Browse Tickets</strong>
+                                    </div>
+                                    <div style="font-size: 13px; color: #6b7280;">
+                                        Explore 1000+ historical tickets organized by category
+                                    </div>
+                                </div>
+                                
+                                <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #8b5cf6; cursor: pointer; transition: all 0.2s;" onclick="openStatsModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                        <strong style="color: #374151;">Database Stats</strong>
+                                    </div>
+                                    <div style="font-size: 13px; color: #6b7280;">
+                                        View comprehensive statistics & insights from ticket database
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 20px; font-size: 13px; color: #9ca3af; text-align: center;">
+                            <em>Powered by AI Team</em>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Describe your IT issue here..." 
+                            rows="1"
+                            maxlength="1000"
+                        ></textarea>
+                        <button id="sendBtn" class="btn-send" disabled>
+                            <span class="send-icon">Send</span>
+                        </button>
+                    </div>
+                    <div class="input-info">
+                        <span class="char-count" id="charCount">0/1000</span>
+                        <span class="hint">Press Enter to send, Shift+Enter for new line</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="info-panel" id="infoPanel">
+                <div class="info-panel-header">
+                    <h3>Current Ticket Analysis</h3>
+                    <button class="btn-panel-toggle" id="expandBtn" title="Collapse Panel">
+                        <img src="/static/icon/expand.png" alt="Toggle" id="expandIcon" style="width: 16px; height: 16px; transform: rotate(180deg);">
+                    </button>
+                </div>
+                
+                <!-- Ticket ID Display -->
+                <div class="ticket-id-display" id="ticketIdDisplay" style="display: none;">
+                    <span class="ticket-id-label">Analyzing Ticket:</span>
+                    <span class="ticket-id-value" id="currentTicketId">-</span>
+                </div>
+                
+                <!-- Classification Card -->
+                <div class="info-card" id="classificationCard" style="display: none;">
+                    <h4>Classification</h4>
+                    <div class="info-row info-row-tooltip" data-tooltip="AI-predicted category based on ticket content analysis. Helps route to the right team.">
+                        <span class="info-label">Category</span>
+                        <span class="info-value" id="infoCategory">-</span>
+                    </div>
+                    <div class="info-row info-row-tooltip" data-tooltip="Urgency level determined by keywords and context. High = Immediate, Medium = Soon, Low = Normal.">
+                        <span class="info-label">Priority</span>
+                        <span class="info-value" id="infoPriority">-</span>
+                    </div>
+                    <div class="info-row info-row-tooltip" data-tooltip="AI's confidence in the category prediction. Higher = more certain classification.">
+                        <span class="info-label">Confidence</span>
+                        <span class="info-value" id="infoConfidence">-</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                    </div>
+                    <div class="info-row routing-row info-row-tooltip" style="margin-top: 10px;" data-tooltip="Smart team routing based on ticket analysis. Click to confirm or choose alternative team.">
+                        <span class="info-label">Agentic Routing</span>
+                        <span class="info-value routing-clickable" id="infoRouting">-</span>
+                    </div>
+                </div>
+
+                <!-- Escalation Card -->
+                <div class="info-card" id="escalationCard" style="display: none;">
+                    <h4>Escalation Status</h4>
+                    <div class="info-row info-row-tooltip" data-tooltip="Whether ticket needs human review or can be auto-resolved. Manual Review = complex issue, Auto-Resolve = standard fix.">
+                        <span class="info-label">Required</span>
+                        <span class="info-value" id="infoEscalation">-</span>
+                    </div>
+                    <div class="info-row info-row-tooltip" data-tooltip="Estimated resolution time based on historical tickets. Includes diagnosis, fix, and testing.">
+                        <span class="info-label">Est. Time</span>
+                        <span class="info-value" id="infoEstTime">-</span>
+                    </div>
+                </div>
+
+                <!-- Evaluation Metrics Card -->
+                <div class="info-card" id="metricsCard" style="display: none;">
+                    <h4>Evaluation Metrics</h4>
+                    <div class="metrics-grid">
+                        <div class="metric-box" data-tooltip="How confident the AI is in the category prediction. Higher = more reliable.">
+                            <div class="metric-label">Accuracy</div>
+                            <div class="metric-value" id="metricAccuracy">-</div>
+                        </div>
+                        <div class="metric-box" data-tooltip="Balance of precision & recall. Range: 0.0-1.0. Higher means better overall performance.">
+                            <div class="metric-label">F1 Score</div>
+                            <div class="metric-value" id="metricF1">-</div>
+                        </div>
+                        <div class="metric-box" data-tooltip="Similarity to best matching ticket. Higher = found very similar past cases.">
+                            <div class="metric-label">Similarity</div>
+                            <div class="metric-value" id="metricSimilarity">-</div>
+                        </div>
+                        <div class="metric-box" data-tooltip="AI quality grade. A = Excellent, B+ = Very Good, B = Good, C = Acceptable.">
+                            <div class="metric-label">LLM Judge</div>
+                            <div class="metric-value" id="metricLLM">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Similar Tickets Card -->
+                <div class="info-card" id="similarCard" style="display: none;">
+                    <h4>Similar Tickets</h4>
+                    <div id="similarTicketsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Modal -->
+        <div class="modal" id="statsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Database Statistics</h2>
+                    <button class="modal-close" onclick="closeStatsModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="statsContent">
+                    <div class="loading">Loading statistics...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Tickets Modal -->
+        <div class="modal" id="browseModal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2>Browse Tickets by Category</h2>
+                    <button class="modal-close" onclick="closeBrowseModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="browseContent">
+                    <div class="loading">Loading tickets...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Tickets Modal -->
+        <div class="modal" id="newTicketModal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2>New Tickets Analysis</h2>
+                    <button class="modal-close" onclick="closeNewTicketModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="newTicketContent">
+                    <div class="loading">Loading new tickets...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat History Modal -->
+        <div class="modal" id="historyModal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2>Chat History</h2>
+                    <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="historyContent">
+                    <div class="loading">Loading chat history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/chatbot.js"></script>
+</body>
+</html>
