@@ -1,26 +1,44 @@
 # AI Powered Intelligent Ticket Routing & Resolution Agent
 
+Summary :
 A comprehensive AI system for automated ticket classification, intelligent routing, and resolution suggestions using machine learning, RAG (Retrieval-Augmented Generation), and agentic escalation systems.
 
-using  sample data  for run this application 
-path -D:\AI_project\AI_Ticket_Routing\data\sample
-and wecan intregate this to real DB or external resource 
+This AI system is designed to enhance the efficiency and accuracy of handling support or service tickets within an organization. It automates the classification, routing, and resolution suggestion process, reducing manual effort and improving response times. The system is particularly useful in environments with high ticket volumes, such as IT support, customer service, or technical operations,health care  etc.
 
-printing log  file path -D:\AI_project\AI_Ticket_Routing\logs\ai_ticket_routing_2026-03-23.log
-using 
+This system aims to web  ticket management by automating classification, routing, and resolution suggestions, while intelligently handling uncertain cases through escalation. It leverages advanced NLP techniques and retrieval methods to improve support efficiency and accuracy, with optional automation features for repeated issues.
+
+Smaple Data:
+using  sample data  for run this application 
+Historical Data CSV Path
+ -\AI_Ticket_Routing\data\sample
+New Data CSV Path
+ -\AI_Ticket_Routing\data\sample\new_tickets_dataset.csv
+POSSIBLITY:
+ -can intregate this to real DB or external resource 
+Log File Path
+ -D:\logs\ai_ticket_routing_2026-03-23.log
+
+Installation
+1. Install dependencies:
+   pip install -r requirements.txt
+Requirment break Down 
+2 to run the service
+use \AI_Ticket_Routing\start_chatbot.bat  or use python cmd
+
+pip install --quiet --upgrade pip
+pip install --quiet -r requirements.txt
+python app.py
+
+
 Project Dependencies & Technologies
 
 Core Technologies:
-
 Flask - Lightweight web framework that runs our backend server and serves the frontend  
 Python 3 - Programming language that powers the entire backend system
-
 AI & Machine Learning:
-
 Groq API - Fast AI inference service that classifies tickets and generates responses  
   - Model: `llama-3.3-70b-versatile` (Meta's Llama 3.3 70B parameter model)
   - Used for: Ticket classification, response generation, and LLM judge evaluation
-  
 LangChain - Framework that helps us chain AI prompts and manage conversations  
 
 Sentence Transformers - Converts ticket text into numerical vectors for similarity search  
@@ -31,9 +49,14 @@ Sentence Transformers - Converts ticket text into numerical vectors for similari
 FAISS - Facebook's library for ultra-fast similarity search across thousands of tickets  
   - Index: L2 distance metric
   - Stores: 1000 ticket embeddings from historical dataset
-  
-scikit-learn - Provides machine learning utilities for evaluation metrics
 
+scikit-learn - Provides machine learning utilities for evaluation metrics
+Agentic AI Router uses Groq's Llama 3.3 70B model to make intelligent routing decisions based on:
+- Classification confidence and quality scores
+- Similarity to historical tickets
+- F1 score metrics
+- Ticket context (priority, category, description)
+- Production impact and security concerns
 Data Processing:
 
 Pandas - Handles CSV files and ticket data manipulation  
@@ -45,7 +68,6 @@ Flask-CORS - Allows frontend to communicate with backend from different ports
 python-dotenv - Loads API keys and secrets from .env file safely
 
 Validation:
-
 Pydantic - Validates data structures and ensures type safety
 
 How They Work Together
@@ -57,7 +79,7 @@ How They Work Together
 5. LangChain + Groq → Generates intelligent response using similar tickets as context
 6. Flask returns → Sends classification, similar tickets, and AI response to frontend
 7. Frontend displays → Shows results with nice UI including metrics and routing info
-
+8.- Classification confidence and quality scores,Similarity to historical tickets,with F1 score metrics and ready for routing to respective category team.
 
  Components
  Automated New Ticket Classification**: Multi-model approach using TF-IDF and Random Forest for accurate categorization
@@ -76,9 +98,7 @@ Supported Categories
 
 Installation
 1. Install dependencies:
-   
    pip install -r requirements.txt
-
 Requirment break Down 
 2 to run the service
 use D:\AI_project\AI_Ticket_Routing\start_chatbot.bat  
@@ -86,15 +106,19 @@ use D:\AI_project\AI_Ticket_Routing\start_chatbot.bat
 
 
 Application Context
-This AI system is designed to enhance the efficiency and accuracy of handling support or service tickets within an organization. It automates the classification, routing, and resolution suggestion process, reducing manual effort and improving response times. The system is particularly useful in environments with high ticket volumes, such as IT support, customer service, or technical operations.
+This AI system is designed to enhance the efficiency and accuracy of handling support or service tickets within an organization. It automates the classification, routing, and resolution suggestion process, reducing manual effort and improving response times. The system is particularly useful in environments with high ticket volumes, such as IT support, customer service, or technical operations,health care  etc.
+
+This system aims to web  ticket management by automating classification, routing, and resolution suggestions, while intelligently handling uncertain cases through escalation. It leverages advanced NLP techniques and retrieval methods to improve support efficiency and accuracy, with optional automation features for repeated issues.
 
 Requirements Breakdown
-Functional Requirements
+Functional Requirements : 
+This system aims to web  ticket management by automating classification, routing, and resolution suggestions, while intelligently handling uncertain cases through escalation. It leverages advanced NLP techniques and retrieval methods to improve support efficiency and accuracy, with optional automation features for repeated issues.
+
 Ticket Classification:
 Automatically analyze incoming tickets to determine their category (e.g., Infrastructure, Application, Security, Database, Network, Access Management).
 
 Routing:
-Direct tickets to the appropriate department or team based on classification results.
+Direct tickets to the appropriate department or team based on classification results.using Agentic AI.
 
 Resolution Suggestion:
 Provide recommended solutions or troubleshooting steps based on historical data.
@@ -115,7 +139,6 @@ RAG (Retrieval-Augmented Generation) Layer:
 Retrieve similar past tickets from a database or knowledge base.
 Suggest resolution steps based on retrieved tickets and their solutions.
 Agentic Layer (added):
-
 Escalate tickets automatically if confidence falls below a threshold.
 Detect repeated issues and suggest automation or self-healing solutions.
 Evaluation Metrics
@@ -130,6 +153,3 @@ Evaluate how closely suggested resolutions match actual solutions.
 
 LLM-as-judge Evaluation:
 Use large language models to assess the quality and appropriateness of the system's suggestions and classifications.
-
-Summary
-This system aims to web  ticket management by automating classification, routing, and resolution suggestions, while intelligently handling uncertain cases through escalation. It leverages advanced NLP techniques and retrieval methods to improve support efficiency and accuracy, with optional automation features for repeated issues.
