@@ -1,5 +1,5 @@
 // Configuration
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:5005';
 const ESCALATION_THRESHOLD = 0.6; // Confidence threshold for escalation
 
 // DOM Elements
@@ -17,6 +17,8 @@ const newTicketBtn = document.getElementById('newTicketBtn');
 const newTicketModal = document.getElementById('newTicketModal');
 const historyBtn = document.getElementById('historyBtn');
 const historyModal = document.getElementById('historyModal');
+const logoutBtn = document.getElementById('logoutBtn');
+const userProfile = document.getElementById('userProfile');
 
 // Info Panel Elements
 const classificationCard = document.getElementById('classificationCard');
@@ -30,13 +32,58 @@ let currentTicketData = null;
 let viewingBrowseTicket = false; // Flag to track if viewing a browse ticket
 let browseTicketData = null; // Store the browse ticket data
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    displayUserInfo();
     checkServerHealth();
     setupEventListeners();
     autoResizeTextarea();
     loadInitialDashboard();
 });
+
+// Auth Helpers
+function getAuthHeaders() {
+    const token = localStorage.getItem('auth_token');
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    };
+}
+
+async function fetchWithAuth(url, options = {}) {
+    const headers = getAuthHeaders();
+    const mergedOptions = {
+        ...options,
+        headers: {
+            ...headers,
+            ...(options.headers || {})
+        }
+    };
+    
+    const response = await fetch(url, mergedOptions);
+    
+    if (response.status === 401) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_info');
+        window.location.href = '/';
+        return null;
+    }
+    
+    return response;
+}
+
+function displayUserInfo() {
+    const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
+    if (userInfo.username && userProfile) {
+        userProfile.textContent = `User: ${userInfo.username}`;
+        userProfile.style.display = 'inline-block';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_info');
+    window.location.href = '/';
+}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -48,6 +95,7 @@ function setupEventListeners() {
     browseBtn.addEventListener('click', openBrowseModal);
     newTicketBtn.addEventListener('click', openNewTicketModal);
     historyBtn.addEventListener('click', openHistoryModal);
+    logoutBtn.addEventListener('click', logout);
     document.getElementById('expandBtn').addEventListener('click', toggleExpandChat);
     document.getElementById('chatPanelToggle').addEventListener('click', toggleExpandChat);
 }
@@ -78,7 +126,7 @@ function toggleExpandChat() {
 // Check Server Health
 async function checkServerHealth() {
     try {
-        const response = await fetch(`${API_BASE_URL}/health`);
+        const response = await fetchWithAuth(`${API_BASE_URL}/health`);
         const data = await response.json();
         
         if (data.status === 'healthy' && data.rag_ready) {
@@ -174,11 +222,8 @@ async function sendMessage() {
     
     // Send to backend
     try {
-        const response = await fetch(`${API_BASE_URL}/chat`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/chat`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({ message })
         });
         
@@ -663,7 +708,7 @@ async function openStatsModal() {
     statsModal.classList.add('active');
     
     try {
-        const response = await fetch(`${API_BASE_URL}/stats`);
+        const response = await fetchWithAuth(`${API_BASE_URL}/stats`);
         const data = await response.json();
         
         displayStats(data);
@@ -750,7 +795,7 @@ async function viewCategoryFromStats(category) {
     // Load all tickets if not already loaded
     if (allTicketsData.length === 0) {
         try {
-            const response = await fetch(`${API_BASE_URL}/all_tickets`);
+            const response = await fetchWithAuth(`${API_BASE_URL}/all_tickets`);
             const data = await response.json();
             allTicketsData = data.tickets || [];
         } catch (error) {
@@ -771,7 +816,7 @@ async function viewPriorityFromStats(priority) {
     // Load all tickets if not already loaded
     if (allTicketsData.length === 0) {
         try {
-            const response = await fetch(`${API_BASE_URL}/all_tickets`);
+            const response = await fetchWithAuth(`${API_BASE_URL}/all_tickets`);
             const data = await response.json();
             allTicketsData = data.tickets || [];
         } catch (error) {
@@ -1000,7 +1045,7 @@ async function openBrowseModal() {
     browseModal.classList.add('active');
     
     try {
-        const response = await fetch(`${API_BASE_URL}/all_tickets`);
+        const response = await fetchWithAuth(`${API_BASE_URL}/all_tickets`);
         const data = await response.json();
         
         allTicketsData = data.tickets || [];
@@ -1492,7 +1537,7 @@ async function openNewTicketModal() {
     startLoadingDots();
     
     try {
-        const response = await fetch(`${API_BASE_URL}/new_tickets`);
+        const response = await fetchWithAuth(`${API_BASE_URL}/new_tickets`);
         const data = await response.json();
         
         // Stop animated dots
@@ -2180,8 +2225,8 @@ async function loadInitialDashboard() {
     try {
         // Fetch stats and new tickets count
         const [statsResponse, newTicketsResponse] = await Promise.all([
-            fetch(`${API_BASE_URL}/stats`),
-            fetch(`${API_BASE_URL}/new_tickets`)
+            fetchWithAuth(`${API_BASE_URL}/stats`),
+            fetchWithAuth(`${API_BASE_URL}/new_tickets`)
         ]);
         
         const statsData = await statsResponse.json();

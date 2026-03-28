@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/css/chatbot.css">
 </head>
 <body>
+    <script>
+        // Immediate token check
+        if (!localStorage.getItem('auth_token')) {
+            window.location.href = '/';
+        }
+    </script>
     <div class="container">
         <!-- Header -->
         <div class="chat-header">
@@ -16,7 +22,10 @@
                 </div>
                 <div class="header-info">
                     <h1>AI Ticket Support Assistant</h1>
-                    <p class="status" id="status">Initializing...</p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p class="status" id="status">Initializing...</p>
+                        <span id="userProfile" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; display: none;"></span>
+                    </div>
                 </div>
             </div>
             <div class="header-right">
@@ -28,6 +37,7 @@
                 <button class="btn-stats" id="browseBtn">Browse Tickets</button>
                 <button class="btn-stats" id="statsBtn">Database Stats</button>
                 <button class="btn-clear" id="clearBtn">Clear Chat</button>
+                <button class="btn-clear" id="logoutBtn" style="background: #ef4444; color: white;">Logout</button>
             </div>
         </div>
 
