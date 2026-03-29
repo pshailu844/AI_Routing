@@ -1,5 +1,5 @@
 // Configuration
-const API_BASE_URL = 'http://localhost:5005';
+const API_BASE_URL = '';
 const ESCALATION_THRESHOLD = 0.6; // Confidence threshold for escalation
 
 // DOM Elements
@@ -33,6 +33,21 @@ let viewingBrowseTicket = false; // Flag to track if viewing a browse ticket
 let browseTicketData = null; // Store the browse ticket data
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Configure session refresh endpoint to point at backend refresh route if session helper is available
+    if (typeof setRefreshConfig === 'function') {
+        try {
+            setRefreshConfig({
+                endpoint: `${API_BASE_URL}/refresh_token`,
+                method: 'POST',
+                requestField: 'refresh_token',
+                responseTokenField: 'token',
+                responseRefreshField: 'refresh_token'
+            });
+        } catch (e) {
+            console.warn('Failed to set refresh config:', e);
+        }
+    }
+
     displayUserInfo();
     checkServerHealth();
     setupEventListeners();
@@ -41,47 +56,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Auth Helpers
-function getAuthHeaders() {
-    const token = localStorage.getItem('auth_token');
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-    };
-}
-
-async function fetchWithAuth(url, options = {}) {
-    const headers = getAuthHeaders();
-    const mergedOptions = {
-        ...options,
-        headers: {
-            ...headers,
-            ...(options.headers || {})
-        }
-    };
-    
-    const response = await fetch(url, mergedOptions);
-    
-    if (response.status === 401) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_info');
-        window.location.href = '/';
-        return null;
-    }
-    
-    return response;
-}
-
 function displayUserInfo() {
-    const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
-    if (userInfo.username && userProfile) {
+    const userInfo = (typeof getUserInfo === 'function') ? getUserInfo() : JSON.parse(localStorage.getItem('user_info') || '{}');
+    if (userInfo && userInfo.username && userProfile) {
         userProfile.textContent = `User: ${userInfo.username}`;
         userProfile.style.display = 'inline-block';
     }
 }
 
 function logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
+    if (typeof clearAuth === 'function') {
+        clearAuth();
+    } else {
+        // Fallback: clear known session keys
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user_info');
+    }
     window.location.href = '/';
 }
 
@@ -107,7 +98,7 @@ function toggleExpandChat() {
     const expandBtn = document.getElementById('expandBtn');
     const chatToggleIcon = document.getElementById('chatToggleIcon');
     const isExpanded = mainContent.classList.contains('expanded');
-    
+
     if (isExpanded) {
         // Show info panel (collapse button state)
         mainContent.classList.remove('expanded');
@@ -128,7 +119,7 @@ async function checkServerHealth() {
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}/health`);
         const data = await response.json();
-        
+
         if (data.status === 'healthy' && data.rag_ready) {
             updateStatus('Ready', 'healthy');
         } else {
@@ -147,7 +138,7 @@ async function checkServerHealth() {
 function updateStatus(message, type) {
     statusElement.textContent = message;
     statusElement.className = 'status';
-    
+
     if (type === 'healthy') {
         statusElement.style.color = '#d1fae5';
     } else if (type === 'error') {
@@ -193,21 +184,21 @@ function sendSampleQuestion(question) {
 async function sendMessage() {
     const message = messageInput.value.trim();
     if (!message) return;
-    
+
     // Remove welcome message if exists
     const welcomeMsg = chatMessages.querySelector('.welcome-message');
     if (welcomeMsg) {
         welcomeMsg.remove();
     }
-    
+
     // Add user message to chat
     addMessage(message, 'user');
-    
+
     // Clear input
     messageInput.value = '';
     handleInputChange();
     messageInput.style.height = 'auto';
-    
+
     // Create and show typing indicator dynamically
     const typingIndicator = document.createElement('div');
     typingIndicator.className = 'typing-indicator';
@@ -219,59 +210,59 @@ async function sendMessage() {
     `;
     chatMessages.appendChild(typingIndicator);
     scrollToBottom();
-    
+
     // Send to backend
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}/chat`, {
             method: 'POST',
             body: JSON.stringify({ message })
         });
-        
+
         if (!response.ok) {
             throw new Error('Server error');
         }
-        
+
         const data = await response.json();
-        
+
         // Remove typing indicator
         typingIndicator.remove();
-        
+
         // Check for API errors in response
         if (data.error_type) {
             displayApiError(data);
             return;
         }
-        
+
         // Store current ticket data
         currentTicketData = data;
-        
+
         // Add bot response
         addMessage(data.response, 'bot');
-        
+
         // Always update info panel with response data (includes similarity)
         // This ensures similarity data is shown after chat responses
         updateInfoPanel(data);
-        
+
         // Clear the browse ticket flag after showing response
         viewingBrowseTicket = false;
-        
+
         // Store in history
         conversationHistory.push({
             user: message,
             bot: data.response,
             metadata: data
         });
-        
+
     } catch (error) {
         typingIndicator.remove();
-        
+
         // Display error message
         displayApiError({
             error_type: 'network_error',
             message: 'Network Error: Unable to connect to the server. Please check if the backend is running.',
             action: 'Ensure the Flask server is running on http://localhost:5000'
         });
-        
+
         console.error('Chat error:', error);
     }
 }
@@ -280,19 +271,19 @@ async function sendMessage() {
 function formatText(text) {
     // Convert **text** to <strong>text</strong>
     text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    
+
     // Convert "Step X:" headers to bold with spacing
     text = text.replace(/(Step \d+:)/g, '<br><br><strong>$1</strong>');
-    
+
     // Convert numbered steps to formatted list (single line break)
     text = text.replace(/(\d+)\.\s/g, '<br><strong>$1.</strong> ');
-    
+
     // Convert bullet points
     text = text.replace(/^[-•]\s/gm, '<br>• ');
-    
+
     // Convert line breaks (preserve existing)
     text = text.replace(/\n/g, '<br>');
-    
+
     return text;
 }
 
@@ -300,43 +291,43 @@ function formatText(text) {
 function addMessage(content, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message message-${type}`;
-    
+
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    
+
     // For bot messages, format the text; for user messages, use plain text
     if (type === 'bot') {
         contentDiv.innerHTML = formatText(content);
     } else {
         contentDiv.textContent = content;
     }
-    
+
     messageDiv.appendChild(contentDiv);
-    
+
     // Add action buttons for bot messages
     if (type === 'bot') {
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'message-actions';
-        
+
         const copyBtn = document.createElement('button');
         copyBtn.className = 'action-btn';
         copyBtn.innerHTML = '<img src="/static/icon/copy-svgrepo-com (1).svg" alt="Copy">';
         copyBtn.title = 'Copy';
         copyBtn.onclick = () => copyMessage(content, copyBtn);
-        
+
         const shareBtn = document.createElement('button');
         shareBtn.className = 'action-btn';
         shareBtn.innerHTML = '<img src="/static/icon/share-2-svgrepo-com.svg" alt="Share">';
         shareBtn.title = 'Share';
         shareBtn.onclick = () => shareMessage(content);
-        
+
         actionsDiv.appendChild(copyBtn);
         actionsDiv.appendChild(shareBtn);
         messageDiv.appendChild(actionsDiv);
     }
-    
+
     chatMessages.appendChild(messageDiv);
-    
+
     scrollToBottom();
 }
 
@@ -348,7 +339,7 @@ function updateInfoPanel(data) {
     escalationCard.style.display = 'block';
     metricsCard.style.display = 'block';
     similarCard.style.display = 'block';
-    
+
     // Show and update ticket ID if available
     const ticketIdDisplay = document.getElementById('ticketIdDisplay');
     const ticketIdValue = document.getElementById('currentTicketId');
@@ -358,7 +349,7 @@ function updateInfoPanel(data) {
     } else {
         ticketIdDisplay.style.display = 'none';
     }
-    
+
     // Check for API warnings and display
     const classification = data.classification || {};
     if (classification.api_warning) {
@@ -366,37 +357,37 @@ function updateInfoPanel(data) {
     } else {
         hideApiWarning();
     }
-    
+
     // Update Classification Card
     const category = classification.category || 'Unknown';
     const confidence = classification.confidence || 0;
     const priority = data.metadata?.priority || 'Medium';
-    
+
     document.getElementById('infoCategory').textContent = category;
-    
+
     // Update Priority with badge styling
     const priorityElement = document.getElementById('infoPriority');
     const priorityClass = priority === 'High' ? 'badge-high' : 
                          priority === 'Medium' ? 'badge-medium' : 'badge-low';
     priorityElement.innerHTML = `<span class="badge ${priorityClass}">${priority}</span>`;
-    
+
     document.getElementById('infoConfidence').textContent = `${(confidence * 100).toFixed(1)}%`;
     document.getElementById('confidenceFill').style.width = `${confidence * 100}%`;
-    
+
     // Use routing data from backend
     const routing = data.routing || {};
     const routingTeam = routing.team || getRoutingDepartment(category);
     const routingElement = document.getElementById('infoRouting');
     routingElement.textContent = routingTeam;
-    
+
     // Make routing clickable
     routingElement.onclick = () => handleRoutingClick(routingTeam, data);
-    
+
     // Update Escalation Card based on routing level
     const teamLevel = routing.level || '';
     const needsEscalation = teamLevel.includes('Manual Review') || teamLevel.includes('L2');
     const estTime = data.metadata?.estimated_time || 0;
-    
+
     let escalationBadge;
     if (teamLevel.includes('Manual Review')) {
         escalationBadge = '<span class="badge badge-escalate">Manual Review Required</span>';
@@ -612,7 +603,7 @@ function confirmClearChat() {
                     </h3>
                     
                     <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #667eea; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #667eea; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'>
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                                 <strong style="color: #374151;">Type Your Issue</strong>
                             </div>
@@ -621,7 +612,7 @@ function confirmClearChat() {
                             </div>
                         </div>
                         
-                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f59e0b; cursor: pointer; transition: all 0.2s;" onclick="openNewTicketModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f59e0b; cursor: pointer; transition: all 0.2s;" onclick="openNewTicketModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'>
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                                 <strong style="color: #374151;">New Tickets</strong>
                                 <span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">EXPLORE</span>
@@ -631,7 +622,7 @@ function confirmClearChat() {
                             </div>
                         </div>
                         
-                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #10b981; cursor: pointer; transition: all 0.2s;" onclick="openBrowseModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #10b981; cursor: pointer; transition: all 0.2s;" onclick="openBrowseModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'>
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                                 <strong style="color: #374151;">Browse Tickets</strong>
                             </div>
@@ -640,7 +631,7 @@ function confirmClearChat() {
                             </div>
                         </div>
                         
-                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #8b5cf6; cursor: pointer; transition: all 0.2s;" onclick="openStatsModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="background: white; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #8b5cf6; cursor: pointer; transition: all 0.2s;" onclick="openStatsModal()" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'>
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                                 <strong style="color: #374151;">Database Stats</strong>
                             </div>
@@ -965,7 +956,7 @@ function displayChatHistory() {
         const priorityClass = priority === 'High' ? 'badge-high' : priority === 'Medium' ? 'badge-medium' : 'badge-low';
         
         html += `
-            <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 18px;">
+            <div style="background: white; border: 2px solid #e7e7eb; border-radius: 12px; padding: 18px;">
                 <div onclick='reloadMessageToInput(${JSON.stringify(conversation.user).replace(/'/g, "&#39;")})' style="cursor: pointer; padding: 12px; background: linear-gradient(135deg, #f3f4ff 0%, #faf5ff 100%); border-radius: 8px; margin-bottom: 12px; border: 2px solid #e9d5ff; transition: all 0.2s;" onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                         <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">U</div>
@@ -2092,7 +2083,7 @@ function handleRoutingClick(routingTeam, ticketData) {
                     <div style="background: #f9fafb; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #667eea;">
                         <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">TICKET DETAILS</div>
                         <div style="font-size: 15px; color: #1f2937; margin-bottom: 6px;"><strong>ID:</strong> ${ticketId}</div>
-                        <div style="font-size: 15px; color: #1f2937; margin-bottom: 6px;"><strong>Category:</strong> ${category}</div>
+                        <div style="font-size: 15px, color: #1f2937; margin-bottom: 6px;"><strong>Category:</strong> ${category}</div>
                         <div style="font-size: 15px; color: #1f2937;"><strong>Priority:</strong> <span class="badge badge-${priority === 'High' ? 'high' : priority === 'Medium' ? 'medium' : 'low'}">${priority}</span></div>
                     </div>
                     

@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.status === 'success') {
-                localStorage.setItem('auth_token', data.token);
-                localStorage.setItem('user_info', JSON.stringify(data.user));
+                // Use centralized session helper
+                if (typeof setAuthToken === 'function') setAuthToken(data.token);
+                if (typeof setRefreshToken === 'function' && data.refresh_token) setRefreshToken(data.refresh_token);
+                if (typeof setUserInfo === 'function') setUserInfo(data.user);
                 showMessage('Login successful! Redirecting...', 'success');
                 setTimeout(() => window.location.href = '/dashboard', 1500);
             } else {
@@ -93,9 +95,5 @@ document.addEventListener('DOMContentLoaded', () => {
         authMessage.textContent = '';
     }
 
-    // Check if already logged in
-    const existingToken = localStorage.getItem('auth_token');
-    if (existingToken) {
-        window.location.href = '/dashboard';
-    }
+    // Note: We no longer redirect here; pages relying on session should check via session helper
 });

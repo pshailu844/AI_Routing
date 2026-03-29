@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="/css/chatbot.css">
 </head>
 <body>
+    <script src="/js/session.js"></script>
     <script>
-        // Immediate token check
-        if (!localStorage.getItem('auth_token')) {
+        // Immediate token check using centralized session helper
+        if (!getAuthToken()) {
             window.location.href = '/';
         }
     </script>
