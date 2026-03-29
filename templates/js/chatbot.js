@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function displayUserInfo() {
     const userInfo = (typeof getUserInfo === 'function') ? getUserInfo() : JSON.parse(localStorage.getItem('user_info') || '{}');
     if (userInfo && userInfo.username && userProfile) {
-        userProfile.textContent = `User: ${userInfo.username}`;
+        userProfile.innerHTML = `<span style="color: #6b7280; font-weight: 500;">User:</span> <span style="color: #8b5cf6;">${userInfo.username}</span>`;
         userProfile.style.display = 'inline-block';
     }
 }
