@@ -301,7 +301,7 @@ def chat():
         # Handle greetings without running full pipeline
         if is_greeting:
             logger.info(f"app | chat | Detected greeting: {message}")
-            greeting_response = """Hello! 👋 Welcome to AI Ticket Support!
+            greeting_response = """Hello! Welcome to AI Ticket Support!
 
 I'm here to help you with IT support issues. Here's how I can assist you:
 

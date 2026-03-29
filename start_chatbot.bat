@@ -7,7 +7,7 @@ echo.
 
 echo Checking and installing dependencies...
 pip install --quiet --upgrade pip
-pip install --quiet -r requirements_chatbot.txt
+pip install --quiet -r requirements.txt
 echo [OK] All dependencies installed
 echo.
 

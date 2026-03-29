@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:requirements_chatbot.txt
 # Python Version Requirement: 3.13.7 or higher
 # Recommended: Python 3.13+
 
@@ -16,3 +17,23 @@ pandas>=2.0
 groq>=0.9
 joblib>=1.3
 PyJWT>=2.8.0
+========
+# Python Version Requirement: 3.13.7 or higher
+# Recommended: Python 3.13+
+
+flask>=2.3.0
+flask-cors>=4.0.0
+python-dotenv>=1.0.0
+langchain>=0.2
+langchain-community>=0.2
+langchain-groq>=0.1
+pydantic>=2
+sentence-transformers>=2.7
+faiss-cpu>=1.7
+scikit-learn>=1.3
+numpy>=1.24
+pandas>=2.0
+groq>=0.9
+joblib>=1.3
+gunicorn
+>>>>>>>> main:requirements.txt
