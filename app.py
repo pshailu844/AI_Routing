@@ -12,8 +12,9 @@ import numpy as np
 load_dotenv()
 
 # Import from service package
-from service import GroqTicketClassifier, GroqRAGSystem, GroqLLMJudge, GroqAgenticRouter
+from service import GroqTicketClassifier, GroqRAGSystem, GroqLLMJudge, GroqAgenticRouter, AuthService
 from service.logger import setup_file_logger
+import functools
 
 # Initialize logger (logs to logs/ai_ticket_routing_YYYY-MM-DD.log)
 logger = setup_file_logger(__name__)
@@ -41,6 +42,7 @@ classifier = None
 rag_system = None
 judge = None
 agentic_router = None
+auth_service = None
 is_initialized = False
 
 def convert_to_serializable(obj):
@@ -96,60 +98,132 @@ def calculate_f1_score(confidence, category, similar_tickets):
 
 def initialize_system():
     """Initialize Groq classifier, RAG system, LLM Judge, and Agentic Router"""
-    global classifier, rag_system, judge, agentic_router, is_initialized
+    global classifier, rag_system, judge, agentic_router, auth_service, is_initialized
     
     if is_initialized:
         return True
     
+    # Individual initializations with try-except to avoid one failure killing the whole process
     try:
-        logger.info("app | initialize_system | Initializing System...")
-        
+        # Initialize AuthService FIRST (Critical for login even if AI fails)
+        logger.info("app | initialize_system | 1. Loading Auth Service...")
+        auth_service = AuthService()
+        logger.info("app | initialize_system |   Auth Service ready")
+    except Exception as e:
+        logger.error(f"app | initialize_system | AuthService initialization error: {e}")
+
+    try:
         # Initialize classifier
-        logger.info("app | initialize_system | 1. Loading Groq Classifier...")
+        logger.info("app | initialize_system | 2. Loading Groq Classifier...")
         classifier = GroqTicketClassifier()
         logger.info("app | initialize_system |   Classifier ready")
+    except Exception as e:
+        logger.error(f"app | initialize_system | Classifier initialization error: {e}")
         
+    try:
         # Initialize RAG system
-        logger.info("app | initialize_system | 2. Loading Groq RAG System...")
+        logger.info("app | initialize_system | 3. Loading Groq RAG System...")
         rag_system = GroqRAGSystem()
         logger.info("app | initialize_system |   RAG system ready")
+    except Exception as e:
+        logger.error(f"app | initialize_system | RAG system initialization error: {e}")
         
+    try:
         # Initialize LLM Judge
-        logger.info("app | initialize_system | 3. Loading Groq LLM Judge...")
+        logger.info("app | initialize_system | 4. Loading Groq LLM Judge...")
         judge = GroqLLMJudge()
         logger.info("app | initialize_system |   LLM Judge ready")
+    except Exception as e:
+        logger.error(f"app | initialize_system | LLM Judge initialization error: {e}")
         
+    try:
         # Initialize Agentic Router
-        logger.info("app | initialize_system | 4. Loading Groq Agentic Router...")
+        logger.info("app | initialize_system | 5. Loading Groq Agentic Router...")
         agentic_router = GroqAgenticRouter()
         logger.info("app | initialize_system |   Agentic Router ready")
+    except Exception as e:
+        logger.error(f"app | initialize_system | Agentic Router initialization error: {e}")
         
+    try:
         # Build FAISS index - NEW PATH
-        logger.info("app | initialize_system | 5. Building FAISS index from dataset...")
+        logger.info("app | initialize_system | 6. Building FAISS index from dataset...")
         csv_path = os.path.join(os.path.dirname(__file__), 'data', 'sample', 'synthetic_tickets_dataset.csv')
         
-        if not os.path.exists(csv_path):
-            logger.error(f"app | initialize_system | Dataset not found at {csv_path}")
-            return False
-        
-        stats = rag_system.build_index(csv_path)
-        logger.info(f"app | initialize_system |   Indexed {stats['num_tickets']} tickets")
-        logger.info(f"app | initialize_system |   Embedding dimension: {stats['embedding_dim']}")
-        
-        is_initialized = True
-        logger.info("app | initialize_system | System initialization complete!")
-        return True
-        
+        if os.path.exists(csv_path) and rag_system:
+            stats = rag_system.build_index(csv_path)
+            logger.info(f"app | initialize_system |   Indexed {stats['num_tickets']} tickets")
+            logger.info(f"app | initialize_system |   Embedding dimension: {stats['embedding_dim']}")
     except Exception as e:
-        logger.error(f"app | initialize_system | Initialization error: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+        logger.error(f"app | initialize_system | FAISS index building error: {e}")
+        
+    is_initialized = True
+    logger.info("app | initialize_system | System initialization phase finished")
+    return True
+        
+# Authentication MiddleWare
+def token_required(f):
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith('Bearer '):
+                token = auth_header.split(" ")[1]
+        
+        if not token:
+            return jsonify({'message': 'Token is missing!', 'status': 'error'}), 401
+        
+        payload = auth_service.verify_token(token)
+        if not payload:
+            return jsonify({'message': 'Token is invalid or expired!', 'status': 'error'}), 401
+        
+        return f(payload, *args, **kwargs)
+    
+    return decorated
 
 @app.route('/')
+def index():
+    """Serve the landing login/registration page"""
+    return render_template('login.html')
+
+@app.route('/dashboard')
 def serve_chatbot():
-    """Serve the main chatbot HTML page"""
-    return send_from_directory('templates/html', 'chatbot.html')
+    """Serve the main chatbot HTML page (dashboard)"""
+    return render_template('chatbot.html')
+
+@app.route('/register', methods=['POST'])
+def register():
+    """Register a new user"""
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    full_name = data.get('full_name')
+    password = data.get('password')
+    
+    if not all([username, email, full_name, password]):
+        return jsonify({"status": "error", "message": "All fields are required"}), 400
+        
+    result = auth_service.register(username, email, full_name, password)
+    return jsonify(result)
+
+@app.route('/login', methods=['POST'])
+def login():
+    """Authenticate user and return JWT token"""
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not all([username, password]):
+        return jsonify({"status": "error", "message": "Username and password required"}), 400
+        
+    result = auth_service.login(username, password)
+    return jsonify(result)
+
+@app.route('/verifyToken', methods=['GET'])
+@token_required
+def verify_token(user_payload):
+    """Verify if the token is still valid and return user data"""
+    return jsonify({"status": "success", "user": user_payload})
 
 @app.route('/css/<path:filename>')
 def serve_css(filename):
@@ -772,16 +846,17 @@ if __name__ == '__main__':
     logger.info("app | __main__ | AI Ticket Support Chatbot - Backend Server")
     logger.info("app | __main__ | " + "="*60)
     
-    if initialize_system():
-        logger.info("app | __main__ | Starting Flask server...")
-        logger.info("app | __main__ | Endpoints:")
-        logger.info("app | __main__ |   - POST /chat      : Send chat messages")
-        logger.info("app | __main__ |   - POST /classify  : Classify tickets only")
-        logger.info("app | __main__ |   - POST /similar   : Find similar tickets")
-        logger.info("app | __main__ |   - GET  /stats     : Get database statistics")
-        logger.info("app | __main__ |   - GET  /health    : Health check")
-        logger.info("app | __main__ | " + "="*60)
-        
-        app.run(debug=True, host='0.0.0.0', port=5000)
-    else:
-        logger.error("app | __main__ | Failed to initialize system. Please check errors above.")
+    # Try to initialize, but don't block server start
+    init_success = initialize_system()
+    if not init_success:
+        logger.warning("app | __main__ | Warning: System initialization failed. AI features may be unavailable.")
+    
+    logger.info("app | __main__ | Starting Flask server...")
+    logger.info("app | __main__ | Endpoints:")
+    logger.info("app | __main__ |   - GET  /          : Login/Landing page")
+    logger.info("app | __main__ |   - POST /login     : User login")
+    logger.info("app | __main__ |   - POST /register  : User registration")
+    logger.info("app | __main__ |   - POST /chat      : Send chat messages")
+    logger.info("app | __main__ | " + "="*60)
+    
+    app.run(debug=True, host='0.0.0.0', port=5010)

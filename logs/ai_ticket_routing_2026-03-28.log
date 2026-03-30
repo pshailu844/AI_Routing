@@ -1,0 +1,175 @@
+2026-03-28 15:19:38 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:19:38 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:19:38 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:19:38 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:19:38 - __main__ - INFO - app | initialize_system | 1. Loading Groq Classifier...
+2026-03-28 15:19:38 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:19:38 - __main__ - INFO - app | initialize_system | 2. Loading Groq RAG System...
+2026-03-28 15:19:42 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:19:42 - __main__ - ERROR - app | __main__ | Failed to initialize system. Please check errors above.
+2026-03-28 15:20:01 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:01 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:20:01 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:01 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:20:01 - __main__ - INFO - app | initialize_system | 1. Loading Groq Classifier...
+2026-03-28 15:20:01 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:20:01 - __main__ - INFO - app | initialize_system | 2. Loading Groq RAG System...
+2026-03-28 15:20:04 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:20:05 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:20:05 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:34 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:34 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:20:34 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:34 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:20:34 - __main__ - INFO - app | initialize_system | 1. Loading Groq Classifier...
+2026-03-28 15:20:34 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:20:34 - __main__ - INFO - app | initialize_system | 2. Loading Groq RAG System...
+2026-03-28 15:20:37 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:20:37 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:20:37 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:40 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:40 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:20:40 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:20:40 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:20:40 - __main__ - INFO - app | initialize_system | 1. Loading Groq Classifier...
+2026-03-28 15:20:40 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:20:40 - __main__ - INFO - app | initialize_system | 2. Loading Groq RAG System...
+2026-03-28 15:20:43 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:20:43 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:20:43 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:21 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:21 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:26:21 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system | 1. Loading Auth Service...
+2026-03-28 15:26:21 - service.auth_service - INFO - auth_service | _load_from_csv | CSV file not found, creating new one
+2026-03-28 15:26:21 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system |   Auth Service ready
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system | 2. Loading Groq Classifier...
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:26:21 - __main__ - INFO - app | initialize_system | 3. Loading Groq RAG System...
+2026-03-28 15:26:24 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:26:24 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:26:24 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:39 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:39 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:26:39 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system | 1. Loading Auth Service...
+2026-03-28 15:26:39 - service.auth_service - INFO - auth_service | _load_from_csv | Loaded 0 users
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system |   Auth Service ready
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system | 2. Loading Groq Classifier...
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:26:39 - __main__ - INFO - app | initialize_system | 3. Loading Groq RAG System...
+2026-03-28 15:26:42 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:26:42 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:26:42 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:19 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:19 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:31:19 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system | Initializing System...
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system | 1. Loading Auth Service...
+2026-03-28 15:31:19 - service.auth_service - INFO - auth_service | _load_from_csv | Loaded 0 users
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system |   Auth Service ready
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system | 2. Loading Groq Classifier...
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:31:19 - __main__ - INFO - app | initialize_system | 3. Loading Groq RAG System...
+2026-03-28 15:31:22 - __main__ - ERROR - app | initialize_system | Initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:31:22 - __main__ - WARNING - app | __main__ | Warning: System initialization failed. AI features may be unavailable.
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:31:22 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:49 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:49 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:31:49 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:49 - __main__ - INFO - app | initialize_system | 1. Loading Auth Service...
+2026-03-28 15:31:49 - service.auth_service - INFO - auth_service | _load_from_csv | Loaded 0 users
+2026-03-28 15:31:49 - __main__ - INFO - app | initialize_system |   Auth Service ready
+2026-03-28 15:31:49 - __main__ - INFO - app | initialize_system | 2. Loading Groq Classifier...
+2026-03-28 15:31:49 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:31:49 - __main__ - INFO - app | initialize_system | 3. Loading Groq RAG System...
+2026-03-28 15:31:52 - __main__ - ERROR - app | initialize_system | RAG system initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system | 4. Loading Groq LLM Judge...
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system |   LLM Judge ready
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system | 5. Loading Groq Agentic Router...
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system |   Agentic Router ready
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system | 6. Building FAISS index from dataset...
+2026-03-28 15:31:52 - __main__ - INFO - app | initialize_system | System initialization phase finished
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:31:52 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:55 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:55 - __main__ - INFO - app | __main__ | AI Ticket Support Chatbot - Backend Server
+2026-03-28 15:31:55 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:31:55 - __main__ - INFO - app | initialize_system | 1. Loading Auth Service...
+2026-03-28 15:31:55 - service.auth_service - INFO - auth_service | _load_from_csv | Loaded 0 users
+2026-03-28 15:31:55 - __main__ - INFO - app | initialize_system |   Auth Service ready
+2026-03-28 15:31:55 - __main__ - INFO - app | initialize_system | 2. Loading Groq Classifier...
+2026-03-28 15:31:55 - __main__ - INFO - app | initialize_system |   Classifier ready
+2026-03-28 15:31:55 - __main__ - INFO - app | initialize_system | 3. Loading Groq RAG System...
+2026-03-28 15:31:58 - __main__ - ERROR - app | initialize_system | RAG system initialization error: Can't load the model for 'sentence-transformers/all-MiniLM-L6-v2'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'sentence-transformers/all-MiniLM-L6-v2' is the correct path to a directory containing a file named pytorch_model.bin, tf_model.h5, model.ckpt or flax_model.msgpack.
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system | 4. Loading Groq LLM Judge...
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system |   LLM Judge ready
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system | 5. Loading Groq Agentic Router...
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system |   Agentic Router ready
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system | 6. Building FAISS index from dataset...
+2026-03-28 15:31:58 - __main__ - INFO - app | initialize_system | System initialization phase finished
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ | Starting Flask server...
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ | Endpoints:
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ |   - GET  /          : Login/Landing page
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ |   - POST /login     : User login
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ |   - POST /register  : User registration
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ |   - POST /chat      : Send chat messages
+2026-03-28 15:31:58 - __main__ - INFO - app | __main__ | ============================================================
+2026-03-28 15:32:25 - service.auth_service - INFO - auth_service | register | User registered: testuser
+2026-03-28 15:32:25 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:33:20 - service.auth_service - INFO - auth_service | login | User logged in: testuser
+2026-03-28 15:34:18 - service.auth_service - INFO - auth_service | register | User registered: testusertest2
+2026-03-28 15:34:25 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:35:09 - service.auth_service - INFO - auth_service | register | User registered: testuserfinaltest
+2026-03-28 15:35:15 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:35:26 - service.auth_service - INFO - auth_service | login | User logged in: testuserfinaltest
+2026-03-28 15:39:17 - service.auth_service - INFO - auth_service | login | User logged in: testuser
+2026-03-28 15:40:11 - service.auth_service - INFO - auth_service | register | User registered: ironman
+2026-03-28 15:40:15 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:41:23 - service.auth_service - INFO - auth_service | register | User registered: agent47
+2026-03-28 15:41:25 - service.auth_service - INFO - auth_service | _save_to_csv | Users data persisted to CSV
+2026-03-28 15:41:35 - service.auth_service - INFO - auth_service | login | User logged in: agent47

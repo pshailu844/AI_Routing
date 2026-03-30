@@ -16,3 +16,4 @@ pandas>=2.0
 groq>=0.9
 joblib>=1.3
 gunicorn
+PyJWT>=2.8.0
